@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="bookingApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Room Slot Booking</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body { font-family: Arial; background:#eef1f5; padding:20px; }
+        .main-container { display:flex; max-width:1200px; margin:auto; gap:25px; }
+        .left-panel { flex:1; background:#fff; padding:20px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08); }
+        .slot-container { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:20px; }
+        .slot { padding:14px; text-align:center; border-radius:10px; background:#f8f9fa; border:2px solid #ced4da; cursor:pointer; transition:.25s; font-weight:bold; }
+        .slot:hover { background:#e8ecf1; }
+        .selected { background:#4a90e2;color:white;border-color:#4a90e2; }
+        .right-panel { width:380px; background:#fff; padding:20px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08); }
+        .panel-title { font-size:20px; margin-bottom:15px; font-weight:bold; color:#333; }
+        .option-box { margin-bottom:20px; }
+        input, select { width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:6px; }
+        .selected-slot-item { padding:8px 10px; background:#e6f2ff; margin-bottom:6px; border-radius:6px; }
+        .submit-btn { width:100%; padding:14px; background:#28a745; color:white; font-size:18px; border:none; border-radius:8px; cursor:pointer; margin-top:15px; }
+    </style>
+</head>
+<body ng-controller="BookingController">
+
+<h2 style="text-align:center;">Room Booking – Select Time Slots</h2>
+
+<div class="main-container">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+        <h3>Available Slots</h3>
+        <div class="slot-container">
+            <div ng-repeat="slot in slots"
+                 ng-click="toggleSlot(slot)"
+                 ng-class="{'slot': true, 'selected': slot.selected}">
+                [[ slot.label ]]
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+        <div class="panel-title">Booking Details</div>
+
+        <div class="option-box">
+            <label><b>Your Name</b></label>
+            <input type="text" ng-model="name">
+        </div>
+
+        <div class="option-box">
+            <label><b>Date</b></label>
+            <input type="date" ng-model="bookingDate">
+        </div>
+
+        <div class="option-box">
+            <label><b>Selected Slots</b></label>
+            <div ng-if="selectedSlots.length == 0"><i>No slots selected</i></div>
+            <div ng-repeat="s in selectedSlots" class="selected-slot-item">[[ s ]]</div>
+        </div>
+
+        <button class="submit-btn" ng-click="submitBooking()">Confirm Booking</button>
+    </div>
+
+</div>
+
+<script>
+    var app = angular.module("bookingApp", []);
+
+    // Fix AngularJS-Django conflict
+    app.config(function($interpolateProvider) {
+        $interpolateProvider.startSymbol('[[');
+        $interpolateProvider.endSymbol(']]');
+    });
+
+    app.controller("BookingController", function($scope, $http) {
+        // Initialize 24 hourly slots
+        $scope.slots = [];
+        for(let i=1; i<=24; i++){
+            $scope.slots.push({
+                hour: i,
+                label: i+":00 - "+(i===24?"01:00":(i+1)+":00"),
+                selected: false
+            });
+        }
+
+        $scope.selectedSlots = [];
+
+        // Toggle slot selection
+        $scope.toggleSlot = function(slot){
+            slot.selected = !slot.selected;
+            $scope.selectedSlots = $scope.slots.filter(s=>s.selected).map(s=>s.label);
+        };
+
+        // Submit booking
+        $scope.submitBooking = function(){
+            const payload = {
+                name: $scope.name,
+                date: $scope.bookingDate,
+                slots: $scope.selectedSlots
+            };
+
+            // Show alert
+            alert("Booking Submitted:\n"+JSON.stringify(payload, null, 2));
+
+            // OPTIONAL: send to backend
+            /*
+            $http.post("/slot_book/", payload).then(function(response){
+                alert("Booking saved to server!");
+            });
+            */
+
+            // Reset form and slots
+            $scope.name = '';
+            $scope.bookingDate = '';
+            $scope.slots.forEach(slot => slot.selected = false);
+            $scope.selectedSlots = [];
+        };
+    });
+</script>
+
+</body>
+</html>
