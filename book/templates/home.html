@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Room Booking Home</title>
+    <style>
+        body { font-family: Arial; background:#eef1f5; padding:50px; text-align:center; }
+        .menu-box {
+            max-width:400px; margin:auto; background:white; padding:30px;
+            border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        }
+        .btn {
+            display:block; width:100%; padding:15px; margin:10px 0;
+            border:none; border-radius:8px; background:#4a90e2;
+            color:white; font-size:18px; cursor:pointer;
+        }
+        .btn:hover { background:#3d7cc2; }
+    </style>
+</head>
+<body>
+
+<h2>Welcome to Room Booking System</h2>
+
+<div class="menu-box">
+    <button class="btn" onclick="window.location.href='/login'">login</button>
+    <button class="btn" onclick="window.location.href='/slotBook'">Book Room</button>
+    <button class="btn" onclick="alert('Feedback page coming soon!')">Feedback</button>
+</div>
+
+</body>
+</html>
