@@ -16,7 +16,7 @@ def login(request):
 def home(request):
     return render(request, 'home.html')
 
-
+#slot book
 def slot_book(request):
 
     return render(request, 'slotbook.html')
